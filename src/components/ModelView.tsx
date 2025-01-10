@@ -3,7 +3,7 @@ import { OrbitControls, PerspectiveCamera, View } from "@react-three/drei";
 import Lights from "./Lights";
 import IPhone from "./IPhone";
 import { Suspense } from "react";
-
+import * as THREE from "three";
 const ModelView = ({
   index,
   groupRef,
@@ -25,10 +25,25 @@ const ModelView = ({
       <PerspectiveCamera makeDefault position={[0, 0, 4]} />
 
       <Lights />
-      <OrbitControls />
-      <Suspense fallback={<div>Loading</div>}>
-        <IPhone />
-      </Suspense>
+      {/* Allows the iphone to be played with*/}
+      <OrbitControls
+        makeDefault
+        ref={controlRef}
+        enableZoom={false}
+        enablePan={false}
+        rotateSpeed={0.4}
+        target={new THREE.Vector3(0, 0, 0)}
+        onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
+      />
+      <group
+        ref={groupRef}
+        name={`${index} === 1 ? 'small' : 'large'`}
+        position={[0, 0, 0]}
+      >
+        <Suspense fallback={"Loading"}>
+          <IPhone scale={index === 1 ? [15, 15, 15] : [17, 17, 17]} />
+        </Suspense>
+      </group>
     </View>
   );
 };
